@@ -35,7 +35,7 @@ class LatencyMonitor {
     func stopMeasuring() {
         timer?.invalidate()
         timer = nil
-        isRunning = true
+        isRunning = false
     }
 
     private func ping() {
@@ -48,7 +48,7 @@ class LatencyMonitor {
                 if error != nil {
                     self.failedPings += 1
                 } else {
-                    let rtt = Date().timeIntervalSince(start)
+                    let rtt = Date().timeIntervalSince(start) * 1000
                     self.measurements.append(rtt)
                     self.calculateStats()
                 }
