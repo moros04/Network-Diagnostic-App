@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct LatencyView: View {
     
@@ -15,18 +16,35 @@ struct LatencyView: View {
         NavigationView {
             VStack(spacing: 20) {
                 
-                if latencyMonitor.measurements.isEmpty {
-                    Text("Press Start to begin measuring")
-                        .foregroundColor(.secondary)
-                } else {
-                    VStack(spacing: 12) {
-                        MetricRow(label: "Avg RTT", value: String(format: "%.2f", latencyMonitor.averageRTT) + " ms")
-                        MetricRow(label: "Jitter", value: String(format: "%.2f", latencyMonitor.jitter) + " ms")
-                        MetricRow(label: "p95 RTT", value: String(format: "%.2f", latencyMonitor.p95RTT) + " ms")
-                        MetricRow(label: "Packet Loss", value: String(format: "%.2f", latencyMonitor.packetLoss) + "%")
+                Chart {
+                    ForEach(Array(latencyMonitor.measurements.enumerated()), id: \.offset) { index, rtt in
+                        LineMark(
+                            x: .value("Ping", index + 1),
+                            y: .value("RTT", rtt)
+                        )
+                        .foregroundStyle(Color.blue)
+                            
+                        PointMark(
+                            x: .value("Ping", index + 1),
+                            y: .value("RTT", rtt)
+                        )
+                        .foregroundStyle(Color.blue)
                     }
-                    .padding()
                 }
+                .frame(height: 200)
+                .padding()
+                .chartXAxisLabel("Ping #")
+                .chartYAxisLabel("RTT (ms)")
+                
+                Divider()
+                
+                MetricRow(label: "Avg RTT", value: String(format: "%.2f", latencyMonitor.averageRTT) + " ms")
+                MetricRow(label: "Jitter", value: String(format: "%.2f", latencyMonitor.jitter) + " ms")
+                MetricRow(label: "p95 RTT", value: String(format: "%.2f", latencyMonitor.p95RTT) + " ms")
+                MetricRow(label: "Packet Loss", value: String(format: "%.2f", latencyMonitor.packetLoss) + "%")
+                    
+            }
+            .padding()
                 
                 Button(action: {
                     if latencyMonitor.isRunning {
@@ -48,7 +66,6 @@ struct LatencyView: View {
             }
             .padding(.top)
             .navigationTitle("Latency Analyzer")
-        }
     }
 }
 
