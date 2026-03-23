@@ -11,7 +11,17 @@ import SwiftUI
 struct CST380_ProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                ConnectivityView()
+                    .tabItem {
+                        Label("Network", systemImage: "wifi")
+                    }
+                
+                LatencyView()
+                    .tabItem {
+                        Label("Latency", systemImage: "speedometer")
+                    }
+            }
         }
     }
 }
