@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ConnectivityView: View {
     @State private var monitor = NetworkMonitor()
     
     var body: some View {
