@@ -1,10 +1,3 @@
-//
-//  LatencyView.swift
-//  CST380-Project
-//
-//  Created by Miguel O on 3/23/26.
-//
-
 import SwiftUI
 import Charts
 
@@ -23,7 +16,7 @@ struct LatencyView: View {
                             y: .value("RTT", rtt)
                         )
                         .foregroundStyle(Color.blue)
-                            
+                        
                         PointMark(
                             x: .value("Ping", index + 1),
                             y: .value("RTT", rtt)
@@ -42,9 +35,6 @@ struct LatencyView: View {
                 MetricRow(label: "Jitter", value: String(format: "%.2f", latencyMonitor.jitter) + " ms")
                 MetricRow(label: "p95 RTT", value: String(format: "%.2f", latencyMonitor.p95RTT) + " ms")
                 MetricRow(label: "Packet Loss", value: String(format: "%.2f", latencyMonitor.packetLoss) + "%")
-                    
-            }
-            .padding()
                 
                 Button(action: {
                     if latencyMonitor.isRunning {
@@ -66,6 +56,7 @@ struct LatencyView: View {
             }
             .padding(.top)
             .navigationTitle("Latency Analyzer")
+        }
     }
 }
 
