@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LatencyView: View {
     
-    var latencyMonitor = LatencyMonitor()
+    @State private var latencyMonitor = LatencyMonitor()
     
     var body: some View {
         NavigationView {
@@ -20,10 +20,10 @@ struct LatencyView: View {
                         .foregroundColor(.secondary)
                 } else {
                     VStack(spacing: 12) {
-                        MetricRow(label: "Avg RTT", value: String(latencyMonitor.averageRTT) + " ms")
-                        MetricRow(label: "Jitter", value: String(latencyMonitor.jitter) + " ms")
-                        MetricRow(label: "p95 RTT", value: String(latencyMonitor.p95RTT) + " ms")
-                        MetricRow(label: "Packet Loss", value: String(latencyMonitor.packetLoss) + "%")
+                        MetricRow(label: "Avg RTT", value: String(format: "%.2f", latencyMonitor.averageRTT) + " ms")
+                        MetricRow(label: "Jitter", value: String(format: "%.2f", latencyMonitor.jitter) + " ms")
+                        MetricRow(label: "p95 RTT", value: String(format: "%.2f", latencyMonitor.p95RTT) + " ms")
+                        MetricRow(label: "Packet Loss", value: String(format: "%.2f", latencyMonitor.packetLoss) + "%")
                     }
                     .padding()
                 }
