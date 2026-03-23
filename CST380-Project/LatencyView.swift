@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import SwiftData
 
 struct LatencyView: View {
     

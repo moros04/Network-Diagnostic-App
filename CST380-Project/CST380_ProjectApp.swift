@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct CST380_ProjectApp: App {
@@ -22,6 +23,8 @@ struct CST380_ProjectApp: App {
                         Label("Latency", systemImage: "speedometer")
                     }
             }
+            .modelContainer(for: LatencyMeasurement.self)
         }
     }
 }
+

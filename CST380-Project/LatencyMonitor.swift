@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import SwiftData
 
 @Observable
 class LatencyMonitor {
     
+    var modelContext: ModelContext?
     var measurements: [Double] = []
     var averageRTT: Double = 0
     var jitter: Double = 0
@@ -36,6 +38,19 @@ class LatencyMonitor {
         timer?.invalidate()
         timer = nil
         isRunning = false
+        saveresult() //Save data when test is finished
+    }
+    
+    //function for saving results
+    private func saveresult() {
+        guard let context = modelContext, !measurements.isEmpty else {return}
+        let record = LatencyMeasurement(
+            averageRTT: averageRTT,
+            jitter: jitter,
+            p95RTT : p95RTT,
+            packetLoss: packetLoss
+        )
+        context.insert(record)
     }
 
     private func ping() {
@@ -83,4 +98,3 @@ class LatencyMonitor {
     }
     
 }
-
