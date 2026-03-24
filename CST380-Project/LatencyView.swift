@@ -20,18 +20,27 @@ struct LatencyView: View{
                             y: .value("RTT", point.y)
                         )
                         .foregroundStyle(.blue)
+                        PointMark(
+                            x: .value("Ping", point.x),
+                            y: .value("RTT", point.y)
+                        )
                     }
                 }
                 .frame(height: 200)
                 .padding()
                 .chartYAxisLabel("RTT (ms)")
+                .chartXAxisLabel("Ping #")
                 
                 Divider()
-                
+//                    .padding(.horizonta)
                 HStack { Text("Avg RTT"); Spacer(); Text(String(format: "%.2f ms", latencyMonitor.averageRTT)) }
+                    .padding(.horizontal, 15)
                 HStack { Text("Jitter"); Spacer(); Text(String(format: "%.2f ms", latencyMonitor.jitter)) }
+                    .padding(.horizontal, 15)
                 HStack { Text("p95 RTT"); Spacer(); Text(String(format: "%.2f ms", latencyMonitor.p95RTT)) }
+                    .padding(.horizontal, 15)
                 HStack { Text("Packet Loss"); Spacer(); Text(String(format: "%.2f%%", latencyMonitor.packetLoss)) }
+                    .padding(.horizontal, 15)
                 
                 Button(action: {
                     if latencyMonitor.isRunning{
@@ -42,7 +51,7 @@ struct LatencyView: View{
                 }){
                     Text(latencyMonitor.isRunning ? "Stop" : "Start")
                         .frame(maxWidth: .infinity)
-                        .padding(.horizontal)
+                        .padding()
                         .background(latencyMonitor.isRunning ? Color.red : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(12)
@@ -70,13 +79,17 @@ struct LatencyView: View{
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             HStack { Text("Avg RTT"); Spacer(); Text(String(format: "%.2f ms", measurement.averageRTT)) }
+                            HStack { Text("p95 RTT"); Spacer(); Text(String(format: "%.2f%%", measurement.p95RTT)) }
+                            HStack { Text("Jitter"); Spacer(); Text(String(format: "%.2f%%", measurement.jitter)) }
                             HStack { Text("Loss"); Spacer(); Text(String(format: "%.2f%%", measurement.packetLoss)) }
+                            
+                            
                         }
                     }
                     .listStyle(.plain)
                     .frame(maxHeight: 200)
                 }
-                Spacer()
+//                Spacer()
             }
             .padding(.top)
             .navigationTitle("Latency Analyzer")
@@ -87,3 +100,7 @@ struct LatencyView: View{
     }
 }
 
+    
+#Preview{
+    LatencyView()
+}
