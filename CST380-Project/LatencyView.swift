@@ -46,6 +46,11 @@ struct LatencyView: View{
                     if latencyMonitor.isRunning{
                         latencyMonitor.stopMeasuring()
                     } else {
+                        latencyMonitor.measurements = []
+                        latencyMonitor.averageRTT = 0
+                        latencyMonitor.jitter = 0
+                        latencyMonitor.p95RTT = 0
+                        latencyMonitor.packetLoss = 0
                         latencyMonitor.startMeasuring()
                     }
                 }){
