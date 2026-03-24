@@ -79,7 +79,11 @@ struct LatencyView: View{
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             HStack { Text("Avg RTT"); Spacer(); Text(String(format: "%.2f ms", measurement.averageRTT)) }
+                            HStack { Text("p95 RTT"); Spacer(); Text(String(format: "%.2f%%", measurement.p95RTT)) }
+                            HStack { Text("Jitter"); Spacer(); Text(String(format: "%.2f%%", measurement.jitter)) }
                             HStack { Text("Loss"); Spacer(); Text(String(format: "%.2f%%", measurement.packetLoss)) }
+                            
+                            
                         }
                     }
                     .listStyle(.plain)
