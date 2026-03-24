@@ -24,6 +24,11 @@ class LatencyMonitor {
     private let totalPings = 10
     private var failedPings = 0
     
+    var progress: Double {
+        let total = Double(measurements.count + failedPings)
+        return total / Double(totalPings)
+    }
+    
     func startMeasuring() {
         measurements = []
         failedPings = 0

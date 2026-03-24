@@ -31,6 +31,16 @@ struct LatencyView: View{
                 .chartYAxisLabel("RTT (ms)")
                 .chartXAxisLabel("Ping #")
                 
+                if latencyMonitor.isRunning {
+                    ProgressView(value: latencyMonitor.progress)
+                        .tint(.blue)
+                        .padding(.horizontal)
+                    
+                    Text("Running test… \(Int(latencyMonitor.progress * 100))%")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
                 Divider()
 //                    .padding(.horizonta)
                 HStack { Text("Avg RTT"); Spacer(); Text(String(format: "%.2f ms", latencyMonitor.averageRTT)) }
