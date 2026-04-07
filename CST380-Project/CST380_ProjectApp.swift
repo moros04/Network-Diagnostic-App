@@ -10,21 +10,30 @@ import SwiftData
 
 @main
 struct CST380_ProjectApp: App {
+
+    init() {
+        NotificationManager.shared.requestPermission()
+    }
+
     var body: some Scene {
         WindowGroup {
             TabView {
                 ConnectivityView()
-                    .tabItem {
-                        Label("Network", systemImage: "wifi")
-                    }
-                
+                    .tabItem { Label("Network", systemImage: "wifi") }
+
                 LatencyView()
-                    .tabItem {
-                        Label("Latency", systemImage: "speedometer")
-                    }
+                    .tabItem { Label("Latency", systemImage: "speedometer") }
+
+                DNSLookupView()
+                    .tabItem { Label("DNS", systemImage: "globe.americas.fill") }
+
+                SubnettingView()
+                    .tabItem { Label("Subnet", systemImage: "network.badge.shield.half.filled") }
+
+                AnalyticsDashboardView()
+                    .tabItem { Label("Analytics", systemImage: "chart.bar.xaxis.ascending.badge.clock") }
             }
-            .modelContainer(for: LatencyMeasurement.self)
+            .modelContainer(for: [LatencyMeasurement.self, DNSLookupResult.self])
         }
     }
 }
-

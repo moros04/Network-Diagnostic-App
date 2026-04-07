@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ConnectivityView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var monitor = NetworkMonitor()
     @State private var selectedInfo: String? = nil
 
@@ -87,7 +88,7 @@ struct ConnectivityView: View {
                 }
             }
             .navigationTitle("Network Monitor")
-            .foregroundStyle(.white)
+            .foregroundStyle(textColor)
             .shadow(color: .blue.opacity(0.9), radius: 6)
         }
         .sheet(isPresented: Binding(
@@ -96,7 +97,8 @@ struct ConnectivityView: View {
         )) {
             if let item = selectedInfo {
                 ZStack {
-                    Color.black.ignoresSafeArea()
+                    (colorScheme == .dark ? Color.black : Color(UIColor.systemBackground))
+                        .ignoresSafeArea()
 
                     VStack(spacing: 18) {
                         Image(systemName: "info.circle.fill")
@@ -105,12 +107,12 @@ struct ConnectivityView: View {
 
                         Text(item)
                             .font(.title2.bold())
-                            .foregroundStyle(.white)
+                            .foregroundStyle(textColor)
 
                         Text(infoText[item] ?? "No information available.")
                             .font(.body)
                             .multilineTextAlignment(.center)
-                            .foregroundStyle(.white.opacity(0.8))
+                            .foregroundStyle(subtextColor)
                             .padding(.horizontal)
 
                         Button {
@@ -162,11 +164,11 @@ struct ConnectivityView: View {
 
                 Text(monitor.isConnected ? "Network Connected" : "No Active Connection")
                     .font(.title3.bold())
-                    .foregroundStyle(.white)
+                    .foregroundStyle(textColor)
 
                 Text("Live device connectivity diagnostics")
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.65))
+                    .foregroundStyle(subtextColor)
             }
             .padding(.vertical, 28)
             .padding(.horizontal)
@@ -178,7 +180,7 @@ struct ConnectivityView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text(title)
                 .font(.headline)
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(textColor)
                 .padding(.horizontal, 4)
 
             VStack(spacing: 14) {
@@ -221,11 +223,11 @@ struct ConnectivityView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(label)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(textColor)
 
                     Text("Tap for details")
                         .font(.caption)
-                        .foregroundStyle(.white.opacity(0.45))
+                        .foregroundStyle(subtextColor)
                 }
 
                 Spacer()
@@ -237,43 +239,40 @@ struct ConnectivityView: View {
 
                     Text(value)
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.82))
+                        .foregroundStyle(subtextColor)
                 }
 
                 Image(systemName: "chevron.right")
                     .font(.caption.bold())
-                    .foregroundStyle(.white.opacity(0.28))
+                    .foregroundStyle(subtextColor.opacity(0.5))
             }
             .padding(.vertical, 8)
         }
         .buttonStyle(.plain)
     }
 
+    // ── Theme helpers ─────────────────────────────────────────────────────
+
     private var backgroundGradient: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.03, green: 0.03, blue: 0.08),
-                Color(red: 0.02, green: 0.05, blue: 0.12),
-                Color.black
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        Group {
+            if colorScheme == .dark {
+                LinearGradient(
+                    colors: [Color(red: 0.03, green: 0.03, blue: 0.08), Color(red: 0.02, green: 0.05, blue: 0.12), .black],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                )
+            } else {
+                LinearGradient(
+                    colors: [Color(red: 0.94, green: 0.96, blue: 0.99), Color(red: 0.88, green: 0.92, blue: 0.97)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                )
+            }
+        }
     }
 
-    private var cardFill: Color {
-        Color.white.opacity(0.07)
-    }
-
-    private var cardStroke: Color {
-        Color.white.opacity(0.09)
-    }
-
-    private var neonBlue: Color {
-        Color(red: 0.18, green: 0.78, blue: 1.0)
-    }
-
-    private var neonPurple: Color {
-        Color(red: 0.62, green: 0.34, blue: 1.0)
-    }
+    private var cardFill:     Color { colorScheme == .dark ? Color.white.opacity(0.07) : Color.white.opacity(0.75) }
+    private var cardStroke:   Color { colorScheme == .dark ? Color.white.opacity(0.09) : Color.gray.opacity(0.18) }
+    private var textColor:    Color { colorScheme == .dark ? .white                    : Color(.label) }
+    private var subtextColor: Color { colorScheme == .dark ? .white.opacity(0.65)      : Color(.secondaryLabel) }
+    private var neonBlue:   Color { Color(red: 0.18, green: 0.78, blue: 1.0) }
+    private var neonPurple: Color { Color(red: 0.62, green: 0.34, blue: 1.0) }
 }

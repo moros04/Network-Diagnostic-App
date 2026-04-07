@@ -3,6 +3,7 @@ import Charts
 import SwiftData
 
 struct LatencyView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var latencyMonitor = LatencyMonitor()
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \LatencyMeasurement.timestamp, order: .reverse) private var history: [LatencyMeasurement]
@@ -30,7 +31,7 @@ struct LatencyView: View {
                 }
             }
             .navigationTitle("Latency Analyzer")
-            .foregroundStyle(.white)
+            .foregroundStyle(textColor)
             .shadow(color: .blue.opacity(0.9), radius: 6)
             .onAppear {
                 latencyMonitor.modelContext = modelContext
@@ -61,12 +62,12 @@ struct LatencyView: View {
 
                 Text("Live Latency Analyzer")
                     .font(.title3.bold())
-                    .foregroundStyle(.white)
+                    .foregroundStyle(textColor)
 
                 Text("Monitor RTT, jitter, and packet loss in real time")
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.white.opacity(0.65))
+                    .foregroundStyle(subtextColor)
             }
             .padding(.vertical, 28)
             .padding(.horizontal)
@@ -78,7 +79,7 @@ struct LatencyView: View {
         VStack(alignment: .leading, spacing: 14) {
             Text("Live RTT Chart")
                 .font(.headline)
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(textColor)
                 .padding(.horizontal, 4)
 
             Chart {
@@ -108,30 +109,30 @@ struct LatencyView: View {
                         x: .value("Ping", point.x),
                         y: .value("RTT", point.y)
                     )
-                    .foregroundStyle(.white)
+                    .foregroundStyle(colorScheme == .dark ? Color.white : Color(.label))
                 }
             }
             .frame(height: 220)
             .chartYAxisLabel("RTT (ms)")
             .chartXAxisLabel("Ping #")
             .chartXAxis {
-                AxisMarks() { value in
+                AxisMarks() { _ in
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                        .foregroundStyle(.white.opacity(0.12))
+                        .foregroundStyle(axisColor)
                     AxisTick()
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(axisColor)
                     AxisValueLabel()
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(axisLabelColor)
                 }
             }
             .chartYAxis {
-                AxisMarks() { value in
+                AxisMarks() { _ in
                     AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                        .foregroundStyle(.white.opacity(0.12))
+                        .foregroundStyle(axisColor)
                     AxisTick()
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(axisColor)
                     AxisValueLabel()
-                        .foregroundStyle(.white.opacity(0.7))
+                        .foregroundStyle(axisLabelColor)
                 }
             }
             .padding(.top, 4)
@@ -153,7 +154,7 @@ struct LatencyView: View {
             HStack {
                 Text("Test Progress")
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(textColor)
                 Spacer()
                 Text("\(Int(latencyMonitor.progress * 100))%")
                     .font(.subheadline.bold())
@@ -164,7 +165,7 @@ struct LatencyView: View {
                 .scaleEffect(x: 1, y: 1.5, anchor: .center)
             Text("Running test…")
                 .font(.caption)
-                .foregroundStyle(.white.opacity(0.6))
+                .foregroundStyle(subtextColor)
         }
         .padding()
         .background(
@@ -264,7 +265,7 @@ struct LatencyView: View {
             HStack {
                 Text("History")
                     .font(.headline)
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(textColor)
 
                 Spacer()
 
@@ -281,7 +282,7 @@ struct LatencyView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(measurement.timestamp.formatted(date: .abbreviated, time: .shortened))
                             .font(.caption)
-                            .foregroundStyle(.white.opacity(0.55))
+                            .foregroundStyle(subtextColor)
 
                         historyMetricRow(title: "Avg RTT", value: String(format: "%.2f ms", measurement.averageRTT))
                         historyMetricRow(title: "p95 RTT", value: String(format: "%.2f ms", measurement.p95RTT))
@@ -291,10 +292,10 @@ struct LatencyView: View {
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 18)
-                            .fill(Color.white.opacity(0.05))
+                            .fill(colorScheme == .dark ? Color.white.opacity(0.05) : Color.black.opacity(0.03))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                                    .stroke(cardStroke, lineWidth: 1)
                             )
                     )
                 }
@@ -326,13 +327,13 @@ struct LatencyView: View {
 
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(textColor)
 
             Spacer()
 
             Text(value)
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white.opacity(0.82))
+                .foregroundStyle(subtextColor)
         }
         .padding(.vertical, 6)
     }
@@ -340,45 +341,44 @@ struct LatencyView: View {
     private func historyMetricRow(title: String, value: String) -> some View {
         HStack {
             Text(title)
-                .foregroundStyle(.white.opacity(0.75))
+                .foregroundStyle(subtextColor)
 
             Spacer()
 
             Text(value)
-                .foregroundStyle(.white)
+                .foregroundStyle(textColor)
         }
         .font(.subheadline)
     }
 
+    // ── Theme helpers ─────────────────────────────────────────────────────
+
     private var backgroundGradient: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.03, green: 0.03, blue: 0.08),
-                Color(red: 0.02, green: 0.05, blue: 0.12),
-                Color.black
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        Group {
+            if colorScheme == .dark {
+                LinearGradient(
+                    colors: [Color(red: 0.03, green: 0.03, blue: 0.08), Color(red: 0.02, green: 0.05, blue: 0.12), .black],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                )
+            } else {
+                LinearGradient(
+                    colors: [Color(red: 0.94, green: 0.96, blue: 0.99), Color(red: 0.88, green: 0.92, blue: 0.97)],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                )
+            }
+        }
     }
 
-    private var cardFill: Color {
-        Color.white.opacity(0.07)
-    }
-
-    private var cardStroke: Color {
-        Color.white.opacity(0.09)
-    }
-
-    private var neonBlue: Color {
-        Color(red: 0.18, green: 0.78, blue: 1.0)
-    }
-
-    private var neonPurple: Color {
-        Color(red: 0.62, green: 0.34, blue: 1.0)
-    }
+    private var cardFill:      Color { colorScheme == .dark ? Color.white.opacity(0.07) : Color.white.opacity(0.75) }
+    private var cardStroke:    Color { colorScheme == .dark ? Color.white.opacity(0.09) : Color.gray.opacity(0.18) }
+    private var textColor:     Color { colorScheme == .dark ? .white                    : Color(.label) }
+    private var subtextColor:  Color { colorScheme == .dark ? .white.opacity(0.65)      : Color(.secondaryLabel) }
+    private var axisColor:     Color { colorScheme == .dark ? .white.opacity(0.12)      : Color.gray.opacity(0.3) }
+    private var axisLabelColor: Color { colorScheme == .dark ? .white.opacity(0.7)      : Color(.secondaryLabel) }
+    private var neonBlue:   Color { Color(red: 0.18, green: 0.78, blue: 1.0) }
+    private var neonPurple: Color { Color(red: 0.62, green: 0.34, blue: 1.0) }
 }
-    
-#Preview{
+
+#Preview {
     LatencyView()
 }

@@ -46,16 +46,17 @@ class LatencyMonitor {
         saveresult() //Save data when test is finished
     }
     
-    //function for saving results
+    // Saves the completed test to SwiftData and fires a notification if RTT is high
     private func saveresult() {
-        guard let context = modelContext, !measurements.isEmpty else {return}
+        guard let context = modelContext, !measurements.isEmpty else { return }
         let record = LatencyMeasurement(
             averageRTT: averageRTT,
             jitter: jitter,
-            p95RTT : p95RTT,
+            p95RTT: p95RTT,
             packetLoss: packetLoss
         )
         context.insert(record)
+        NotificationManager.shared.notifyIfLatencyHigh(averageRTT: averageRTT)
     }
 
     private func ping() {
